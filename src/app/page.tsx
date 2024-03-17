@@ -89,7 +89,9 @@ const HomeStyled = styled.main`
 export default function Home() {
   const [movie, setMovie] = useState<IMovie>();
   const [percent, setPercent] = useState(0);
-  const [moviePopularities, setMoviesPopularities] = useState<IMovie[]>([])
+  const [moviePopularities, setMoviesPopularities] = useState<IMovie[]>([]);
+  const [moviesUpcoming, setMoviesUpcoming] = useState<IMovie[]>([]);
+  const [moviesTopRated, setMoviesTopRated] = useState<IMovie[]>([]);
 
  
 
@@ -101,17 +103,35 @@ export default function Home() {
       }).catch(error => {
         console.log(error)
       })
-  },[]);
 
-  useEffect(() => {
-    api.get("movie/popular")
+      api.get("movie/popular")
       .then(response => {
         setMoviesPopularities(response.data.results)
         console.log(response.data.results)
       }).catch(error => {
         console.log(error?.response.data)
       })
-  },[])
+
+      api.get("movie/upcoming")
+      .then(response => {
+        setMoviesUpcoming(response.data.results)
+        console.log(response.data.results)
+      }).catch(error => {
+        console.log(error?.response.data)
+      })
+
+      api.get("movie/top_rated")
+      .then(response => {
+        setMoviesTopRated(response.data.results)
+        console.log(response.data.results)
+      }).catch(error => {
+        console.log(error?.response.data)
+      })
+  },[]);
+
+  useEffect(() => {
+   
+  },[]);
 
   return (
     <HomeStyled>
@@ -150,7 +170,23 @@ export default function Home() {
         {moviePopularities && moviePopularities.map(movieCard => <CardMovie 
         image={`https://image.tmdb.org/t/p/original${movieCard?.poster_path}`} 
         title={movieCard?.title}
-        votePercent={movieCard?.vote_average || 0}
+        votePercent={movieCard?.vote_average}
+        key={movieCard?.id}
+        />)}
+      </ListMovie>
+      <ListMovie titleList="Em Breve" moreInfo="upcoming">
+        {moviesUpcoming && moviesUpcoming.map(movieCard => <CardMovie 
+        image={`https://image.tmdb.org/t/p/original${movieCard?.poster_path}`} 
+        title={movieCard?.title}
+        votePercent={movieCard?.vote_average}
+        key={movieCard?.id}
+        />)}
+      </ListMovie>
+      <ListMovie titleList="Mais Votados" moreInfo="topRated">
+        {moviesTopRated && moviesTopRated.map(movieCard => <CardMovie 
+        image={`https://image.tmdb.org/t/p/original${movieCard?.poster_path}`} 
+        title={movieCard?.title}
+        votePercent={movieCard?.vote_average}
         key={movieCard?.id}
         />)}
       </ListMovie>
